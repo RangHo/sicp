@@ -140,75 +140,6 @@ There are three useful special forms that combine predicates together:
 (not predicate)
 ```
 
-### Exercise 1.1 Solution
-
-```scheme
-10 -> 10
-(+ 5 3 4) -> 12
-(- 9 1) -> 8
-(/ 6 2) -> 3
-(+ (* 2 4) (- 4 6)) -> 6
-(define a 3)
-(define b (+ a 1))
-(+ a b (* a b)) -> 19
-(= a b) -> #f
-(if (and (> b a) (< b (* a b)))
-    b
-    a) -> 4
-(cond ((= a 4) 6)
-      ((= b 4) (+ 6 7 a))
-      (else 25)) -> 16
-(+ 2 (if (> b a) b a)) -> 6
-(* (cond ((> a b) a)
-         ((< a b) b)
-         (else -1))
-   (+ a 1)) -> 16
-```
-
-### Exercise 1.2 Solution
-
-```scheme
-(/ (+ 5 4 (- 2 (- 3 (+ 6 (/ 4 5)))))
-   (* 3 (- 6 2) (- 2 7)))
-```
-
-### Exercise 1.3 Solution
-
-```scheme
-(define (square x) (* x x))
-(define (sum-of-square x y) (+ (square x) (square y)))
-(define (sum-of-squares-of-largest-two x y z)
-        (cond ((and (<= x y) (<= x z)) (sum-of-square y z))
-              ((and (<= y x) (<= y z)) (sum-of-square x z))
-              (else (sum-of-square x y))))
-```
-
-### Exercise 1.4 Solution
-
-When evaluating the leftmost expression (`if (> b 0) + -)`, the result is not a value; rather, the evaluated result is a built-in procedure.
-Thus, depending on the value of `b`, we choose whether `+` or `-` to be applied to `a` and `b`.
-
-### Exercise 1.5 Solution
-
-When the interpreter is using *applicative-order evaluation*, the following would happen (`=>` denotes normal order evaluation):
-```scheme
-(test 0 (p))
-=> (test 0 (p))
-=> (test 0 (p))
-=> ...
-```
-Since the procedure `p` evaluates to the evaluation of `p` itself, using applicative-order evaluation creates an infinite recursion.
-Thus, `test` never evaluates to a value.
-
-When the interpreter is using *normal-order evaluation*, the following would happen (`->` denotes normal order evaluation):
-```scheme
-(test 0 (p))
--> (if (= 0 0) 0 (p))
--> 0
-```
-Assuming that `if` is a special construct that conditionally evaluate a value depnding on the value of the predicate, the infinite-recursing procedure `p` is never evaluated.
-Thus, `test` successfully evaluates to `0`.
-
 ## 1.1.7. Example: Square roots by Newton's Method
 
 Newton's method of approximating the square root of a number is to continuously improving our guess by averaging our guess with the number divided by our guess.
@@ -222,9 +153,3 @@ Newton's method of approximating the square root of a number is to continuously 
             guess
             (sqrt-iter (improve guess x) x)))
 ```
-
-### Exercise 1.6 Solution
-
-When Alyssa tries to use this program, the `sqrt-iter` procedure using `new-if` would never return.
-As demonstrated in the [solution to Exercise 1.5](#exercise-15-solution), `new-if` is a regular procedure, thus follows the *applicative-order evaluation* rule of typical LISP interpreters.
-this causes `sqrt-iter` to be evaluated within `sqrt-iter` calls without bounds, causing infinite recursion.
